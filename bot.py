@@ -45,6 +45,10 @@ def load_json_file(filename):
     except json.JSONDecodeError as e:
         logging.exception("Ошибка при разборе JSON-файла.")
         return []
+    
+def clear_connections():
+    with open("business_connections.json", "w", encoding="utf-8") as f:
+        f.write("[]")
 
 def get_connection_id_by_user(user_id: int) -> str:
     # Пример: загружаем из файла или словаря
@@ -537,6 +541,14 @@ async def test(message: Message):
         await message.reply("Нет доступа.")
         return
     await message.answer("Проверка выполнена. Бот готов к работе!")
+
+@dp.message(F.text == "/clear_connections")
+async def clear_connections_handler(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        await message.reply("Нет доступа.")
+        return
+    clear_connections()
+    await message.answer("Все данные соединений сброшены.")
 
 async def main():
     print("Made with love by @antistoper")
